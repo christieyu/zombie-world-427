@@ -9,6 +9,39 @@ from youbot_zombie import *
 #define functions here for making decisions and using sensor inputs
     
     
+# Set "points" for berries:
+    # negative pts = bad result — do not try again
+    # 0 pt = untried
+    # 1 pt = add health
+    # 2 pt = add energy
+    # 3 pt = armor
+    
+berries = {
+            "red": {},
+            "yellow": {},
+            "orange": {},
+            "pink": {}
+          }
+          
+def try_berry(color):
+    # health, energy
+    old_stats = [robot_info[0], robot_info[1], robot_info[2]]
+    buffer = 5
+    # try berry
+    if robot_info[1] + buffer < old_stats[1]:
+        return -1
+    if robot_info[0] > old_stats[0] + buffer:
+        return 1
+    if robot_info[1] > old_stats[1] + buffer:
+        return 2
+    if robot_info[2] > old_stats[2] + buffer:
+        return 3
+        
+def berry_controller();
+    # TODO: get berry
+    if len(berries[color]) < 2:
+        berries[color].add(try_berry(color))
+    
 
 
 #------------------CHANGE CODE ABOVE HERE ONLY--------------------------
