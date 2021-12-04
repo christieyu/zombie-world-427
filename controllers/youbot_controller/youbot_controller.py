@@ -14,10 +14,20 @@ class robotPathfinder:
     default state is to seek berries"
     def __init__(self, state = "seek", threshold = 8):
         self.st = state
-        # avoid is cautious, seek is find berries, survive is last stand
-        self.states = ["seek","avoid","survive"]
+        self.states = ["avoid","seek","survive"]
         self.threshold = threshold
-        self.berrydict = {}
+        self.berries =  {
+            # Set "points" for berries:
+                # negative pts = bad result — do not try again
+                # 0 pt = untried
+                # 1 pt = add health
+                # 2 pt = add energy
+                # 3 pt = armor
+                            "red": {},
+                            "yellow": {},
+                            "orange": {},
+                            "pink": {}
+                        }
         self.dangerZ = set("p","o")
 
     def distance(self,point):
@@ -44,14 +54,20 @@ class robotPathfinder:
         "robot drives in direction of item"
         pass
 
-    def berryAction(self, berrycolor):
-        "makes choices about whether to eat or not eats berries"
-        # implement code to eat berries
-        pass
-
-    def eatBerry(self):
-        "move towards berry and eat it"
-        pass
+    def tryBerry(self, berrycolor):
+        "tries berry and returns appropriate # of pts to berries dict"
+        if len(self.berries[berrycolor]) < 2:
+            old_stats = [robot_info[0], robot_info[1], robot_info[2]]
+            buffer = 5
+            # try berry
+            if robot_info[1] + buffer < old_stats[1]:
+                self.berries[berrycolor].add(-1)
+            if robot_info[0] > old_stats[0] + buffer:
+                self.berries[berrycolor].add(1)
+            if robot_info[1] > old_stats[1] + buffer:
+                self.berries[berrycolor].add(2)
+            if robot_info[2] > old_stats[2] + buffer:
+                self.berries[berrycolor].add(3)
 
     def treeAction(self):
         "make choice about whether to approach or avoid tree"
@@ -60,17 +76,11 @@ class robotPathfinder:
     def pathfind(self, lidar_output):
         "top level controller for pathfinding. function for getting lidar output is passed as param"
 
-        while true:
+        while True:
             # go through each point in lidar output, determine appropriate action if item is within action threshold
             output = lidar_output()
             if not output:
                 self.st = "seek" # randomly wander until we find an energy berry, and then enter eat berry state
-
-            #implement code to enter into survive mode if health is less than 20 percent
-            """
-            if robot.health < 20:
-                self.st = "survive"
-            """
 
             for point in :
                 if self.distance(point) <= self.threshold:
@@ -87,20 +97,16 @@ class robotPathfinder:
                     # if berry and robot is not in avoid or survive states, call eatBerry function
                     elif objectID == "b":
                         if self.state == "seek":
-                            self.berryAction(color)
+                            self.eatBerries(color)
                         pass
 
                     # if tree and robot is not in avoid or survive states, call treAction function
                     elif objectID == "t":
-                        if self.state == "seek"
+                        if self.state == "seek":
                             self.treeAction()
                         pass
 
             #may need to add a time delay here before entering next iteration of loop
-
-
-
-
     
 
 
