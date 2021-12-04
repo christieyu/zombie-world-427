@@ -4,10 +4,92 @@ from controller import Robot, Motor, Camera, Accelerometer, GPS, Gyro, LightSens
 from controller import Supervisor
 
 from youbot_zombie import *
+import math
    
 #------------------CHANGE CODE BELOW HERE ONLY--------------------------
 #define functions here for making decisions and using sensor inputs
-    
+
+class robotPathfinder:
+    "pathfinding manager for robot. avoids zombies and seeks berries depending on current robot state. \
+    default state is to seek berries"
+    def __init__(self, state = "seek", threshold = 8):
+        self.st = state
+        self.states = ["avoid","seek","survive"]
+        self.threshold = threshold
+        self.berrydict = {}
+        self.dangerZ = set("p","o")
+
+    def distance(self,point):
+        "finds distance from a lidar point to (0,0)"
+        x, y, z = point
+        return math.sqrt((x**2)+(y**2)+(z**2))
+
+    def identify(self, item):
+        "determines if item is zombie, tree, or berry. If zombie, or berry, also returns what color. \
+        second term if empty string if is tree"
+        return ("z","g")
+
+    def escape(self):
+        "Makes robot drive away from threat at normal speed if not dangerous zombie, at max speed \
+        if super dangerous zombie"
+        # implement code to drive robot in the most open direction for 5 seconds
+        if self.st == "avoid":
+            #run away at normal speed
+        if self.st == "survive":
+            #run away really really really fast
+        pass
+
+    def approach(self, item):
+        "robot drives in direction of item"
+        pass
+
+    def eatBerries(self, berrycolor):
+        "makes choices about whether to eat or not eats berries"
+        # implement code to eat berries
+        pass
+
+    def treeAction(self):
+        "make choice about whether to approach or avoid tree"
+        pass
+
+    def pathfind(self, lidar_output):
+        "top level controller for pathfinding. function for getting lidar output is passed as param"
+
+        while true:
+            # go through each point in lidar output, determine appropriate action if item is within action threshold
+            output = lidar_output()
+            if not output:
+                self.st = "seek" # randomly wander until we find an energy berry, and then enter eat berry state
+
+            for point in :
+                if self.distance(point) <= self.threshold:
+                    objectID, color = self.identify(point)
+
+                    # if zombie, set state to avoid or survive based on danger level, call escape() function
+                    if objectID == "z":
+                        if color in self.dangerZ:
+                            self.st = "avoid"
+                        else:
+                            self.st = "survive"
+                        self.escape()
+
+                    # if berry and robot is not in avoid or survive states, call eatBerry function
+                    elif objectID == "b":
+                        if self.state == "seek":
+                            self.eatBerries(color)
+                        pass
+
+                    # if tree and robot is not in avoid or survive states, call treAction function
+                    elif objectID == "t":
+                        if self.state == "seek"
+                            self.treeAction()
+                        pass
+
+            #may need to add a time delay here before entering next iteration of loop
+
+
+
+
     
 
 
