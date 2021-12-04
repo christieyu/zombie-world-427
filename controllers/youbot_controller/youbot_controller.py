@@ -59,7 +59,7 @@ class robotPathfinder:
             # go through each point in lidar output, determine appropriate action if item is within action threshold
             output = lidar_output()
             if not output:
-                self.st = "seek"
+                self.st = "seek" # randomly wander until we find an energy berry, and then enter eat berry state
 
             for point in :
                 if self.distance(point) <= self.threshold:
@@ -68,9 +68,9 @@ class robotPathfinder:
                     # if zombie, set state to avoid or survive based on danger level, call escape() function
                     if objectID == "z":
                         if color in self.dangerZ:
-                            self.st = "survive"
-                        else:
                             self.st = "avoid"
+                        else:
+                            self.st = "survive"
                         self.escape()
 
                     # if berry and robot is not in avoid or survive states, call eatBerry function
