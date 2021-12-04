@@ -14,7 +14,8 @@ class robotPathfinder:
     default state is to seek berries"
     def __init__(self, state = "seek", threshold = 8):
         self.st = state
-        self.states = ["avoid","seek","survive"]
+        # avoid is cautious, seek is find berries, survive is last stand
+        self.states = ["seek","avoid","survive"]
         self.threshold = threshold
         self.berrydict = {}
         self.dangerZ = set("p","o")
@@ -43,9 +44,13 @@ class robotPathfinder:
         "robot drives in direction of item"
         pass
 
-    def eatBerries(self, berrycolor):
+    def berryAction(self, berrycolor):
         "makes choices about whether to eat or not eats berries"
         # implement code to eat berries
+        pass
+
+    def eatBerry(self):
+        "move towards berry and eat it"
         pass
 
     def treeAction(self):
@@ -60,6 +65,12 @@ class robotPathfinder:
             output = lidar_output()
             if not output:
                 self.st = "seek" # randomly wander until we find an energy berry, and then enter eat berry state
+
+            #implement code to enter into survive mode if health is less than 20 percent
+            """
+            if robot.health < 20:
+                self.st = "survive"
+            """
 
             for point in :
                 if self.distance(point) <= self.threshold:
@@ -76,7 +87,7 @@ class robotPathfinder:
                     # if berry and robot is not in avoid or survive states, call eatBerry function
                     elif objectID == "b":
                         if self.state == "seek":
-                            self.eatBerries(color)
+                            self.berryAction(color)
                         pass
 
                     # if tree and robot is not in avoid or survive states, call treAction function
