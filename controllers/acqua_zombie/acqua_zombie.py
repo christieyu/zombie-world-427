@@ -137,10 +137,10 @@ class Pedestrian (Supervisor):
         while not self.step(self.time_step) == -1:
             self.translation = self.translationField.getSFVec3f()
             self.move_zombie(self.translation[0], self.translation[2], goal[0],goal[1])
-            
+            emitter.send(message)
             if (timer == 32): #only change movement once every second
                 timer = 0
-                emitter.send(message)
+                #emitter.send(message)
                 youbotTranslation = youbotTranslationField.getSFVec3f()
                 if (self.youbotDistance(youbotTranslation, self.translation) < 3):#if robot close, chase it
                     x_goal = youbotTranslation[0]

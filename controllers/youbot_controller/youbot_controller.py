@@ -117,50 +117,50 @@ def main():
     #------------------CHANGE CODE BELOW HERE ONLY--------------------------
     
     #COMMENT OUT ALL SENSORS THAT ARE NOT USED. READ SPEC SHEET FOR MORE DETAILS
-    accelerometer = robot.getDevice("accelerometer")
-    accelerometer.enable(timestep)
+    # accelerometer = robot.getDevice("accelerometer")
+    # accelerometer.enable(timestep)
     
-    gps = robot.getDevice("gps")
-    gps.enable(timestep)
+    # gps = robot.getDevice("gps")
+    # gps.enable(timestep)
     
-    compass = robot.getDevice("compass")
-    compass.enable(timestep)
+    # compass = robot.getDevice("compass")
+    # compass.enable(timestep)
     
-    camera1 = robot.getDevice("ForwardLowResBigFov")
-    camera1.enable(timestep)
+    # camera1 = robot.getDevice("ForwardLowResBigFov")
+    # camera1.enable(timestep)
     
-    camera2 = robot.getDevice("ForwardHighResSmallFov")
-    camera2.enable(timestep)
+    # camera2 = robot.getDevice("ForwardHighResSmallFov")
+    # camera2.enable(timestep)
     
-    camera3 = robot.getDevice("ForwardHighRes")
-    camera3.enable(timestep)
+    # camera3 = robot.getDevice("ForwardHighRes")
+    # camera3.enable(timestep)
     
-    camera4 = robot.getDevice("ForwardHighResSmall")
-    camera4.enable(timestep)
+    # camera4 = robot.getDevice("ForwardHighResSmall")
+    # camera4.enable(timestep)
     
-    camera5 = robot.getDevice("BackLowRes")
-    camera5.enable(timestep)
+    # camera5 = robot.getDevice("BackLowRes")
+    # camera5.enable(timestep)
     
-    camera6 = robot.getDevice("RightLowRes")
-    camera6.enable(timestep)
+    # camera6 = robot.getDevice("RightLowRes")
+    # camera6.enable(timestep)
     
-    camera7 = robot.getDevice("LeftLowRes")
-    camera7.enable(timestep)
+    # camera7 = robot.getDevice("LeftLowRes")
+    # camera7.enable(timestep)
     
-    camera8 = robot.getDevice("BackHighRes")
-    camera8.enable(timestep)
+    # camera8 = robot.getDevice("BackHighRes")
+    # camera8.enable(timestep)
     
-    gyro = robot.getDevice("gyro")
-    gyro.enable(timestep)
+    # gyro = robot.getDevice("gyro")
+    # gyro.enable(timestep)
     
-    lightSensor = robot.getDevice("light sensor")
-    lightSensor.enable(timestep)
+    # lightSensor = robot.getDevice("light sensor")
+    # lightSensor.enable(timestep)
     
     receiver = robot.getDevice("receiver")
     receiver.enable(timestep)
     
-    rangeFinder = robot.getDevice("range-finder")
-    rangeFinder.enable(timestep)
+    # rangeFinder = robot.getDevice("range-finder")
+    # rangeFinder.enable(timestep)
     
     lidar = robot.getDevice("lidar")
     lidar.enable(timestep)
