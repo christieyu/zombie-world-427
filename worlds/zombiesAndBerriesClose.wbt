@@ -29,7 +29,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation -0.0011009393631075486 -0.8983980882936718 -0.43918067225550184 3.1509554642637876
-  position 1.1890929351903017 26.327247241276613 -21.930307187073605
+  position 1.272749513080754 33.36603284070744 -27.40909463019036
 }
 TexturedBackground {
 }
@@ -254,7 +254,7 @@ DEF Berry3 Solid {
   angularVelocity 2.8357782973031987e-05 7.798165628291149e-16 5.6715565956721925e-05
 }
 DEF zombie0 Pedestrian {
-  translation -6.33377 1.27 -5.83252
+  translation -9.4929 1.27 -8.85196
   rotation 0 1 0 0.8080057916952201
   name "pedestrian1"
   controller "blue_zombie"
@@ -324,7 +324,7 @@ DEF zombie1 Pedestrian {
   headAngle 0.003272727272726854
 }
 DEF zombie4 Pedestrian {
-  translation -1.98828 1.27 -9.81232
+  translation -2.05359 1.27 -10.5097
   rotation 0 1 0 1.66437
   name "pedestrian(5)"
   controller "purple_zombie"
@@ -357,7 +357,7 @@ DEF zombie4 Pedestrian {
   headAngle 0.003272727272726854
 }
 DEF zombie5 Pedestrian {
-  translation 2.27172 1.27 0.000177189
+  translation 4.00529 1.27 -11.0146
   rotation 0 1 0 1.41467
   name "pedestrian(4)"
   controller "acqua_zombie"
