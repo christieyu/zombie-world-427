@@ -8,90 +8,53 @@ import math
    
 #------------------CHANGE CODE BELOW HERE ONLY--------------------------
 #define functions here for making decisions and using sensor inputs
-import cv2
+import numpy as np
+import cv2 as cv
 
-# class robotPathfinder:
-#     "pathfinding manager for robot. avoids zombies and seeks berries depending on current robot state. \
-#     default state is to seek berries"
-#     def __init__(self, state = "seek", threshold = 8):
-#         self.st = state
-#         self.states = ["avoid","seek","survive"]
-#         self.threshold = threshold
-#         self.berrydict = {}
-#         self.dangerZ = set("p","o")
-
-#     def distance(self,point):
-#         "finds distance from a lidar point to (0,0)"
-#         x, y, z = point
-#         return math.sqrt((x**2)+(y**2)+(z**2))
-
-#     def identify(self, item):
-#         "determines if item is zombie, tree, or berry. If zombie, or berry, also returns what color. \
-#         second term if empty string if is tree"
-#         return ("z","g")
-
-#     def escape(self):
-#         "Makes robot drive away from threat at normal speed if not dangerous zombie, at max speed \
-#         if super dangerous zombie"
-#         # implement code to drive robot in the most open direction for 5 seconds
-#         if self.st == "avoid":
-#             #run away at normal speed
-#         if self.st == "survive":
-#             #run away really really really fast
-#         pass
-
-#     def approach(self, item):
-#         "robot drives in direction of item"
-#         pass
-
-#     def eatBerries(self, berrycolor):
-#         "makes choices about whether to eat or not eats berries"
-#         # implement code to eat berries
-#         pass
-
-#     def treeAction(self):
-#         "make choice about whether to approach or avoid tree"
-#         pass
-
-#     def pathfind(self, lidar_output):
-#         "top level controller for pathfinding. function for getting lidar output is passed as param"
-
-#         while true:
-#             # go through each point in lidar output, determine appropriate action if item is within action threshold
-#             output = lidar_output()
-#             if not output:
-#                 self.st = "seek" # randomly wander until we find an energy berry, and then enter eat berry state
-
-#             for point in :
-#                 if self.distance(point) <= self.threshold:
-#                     objectID, color = self.identify(point)
-
-#                     # if zombie, set state to avoid or survive based on danger level, call escape() function
-#                     if objectID == "z":
-#                         if color in self.dangerZ:
-#                             self.st = "avoid"
-#                         else:
-#                             self.st = "survive"
-#                         self.escape()
-
-#                     # if berry and robot is not in avoid or survive states, call eatBerry function
-#                     elif objectID == "b":
-#                         if self.state == "seek":
-#                             self.eatBerries(color)
-#                         pass
-
-#                     # if tree and robot is not in avoid or survive states, call treAction function
-#                     elif objectID == "t":
-#                         if self.state == "seek"
-#                             self.treeAction()
-#                         pass
-
-#             #may need to add a time delay here before entering next iteration of loop
-
-
-
-
+# def camera_detection(camera):
+#     print("camera detection")
     
+#     # get image from camera sensor
+#     pic = camera.getImageArray()
+#     result = {}
+#     if pic:
+#         # convert rgb bytes to hsv array
+#         pic = np.uint8(pic)
+#         hsv = cv.cvtColor(pic, cv.COLOR_BGR2HSV)
+#         # define color thresholds
+#         ranges =    {
+#                         "black" : [np.array([0, 0, 0]), np.array([180, 255, 46])],\
+#                         "grey" : [np.array([0, 0, 46]), np.array([180, 43, 220])],\
+#                         "white" : [np.array([0, 0, 221]), np.array([180, 30, 225])],\
+#                         "red" : [np.array([0, 43, 46]), np.array([10, 255, 225])],\
+#                         "red2" : [np.array([156, 43, 46]), np.array([180, 255, 225])],\
+#                         "yellow" : [np.array([26, 43, 46]), np.array([34, 255, 225])],\
+#                         "green" : [np.array([35, 43, 46]), np.array([77, 255, 225])],\
+#                         "aqua" : [np.array([78, 43, 46]), np.array([99, 255, 225])],\
+#                         "blue" : [np.array([100, 43, 46]), np.array([124, 255, 255])], \
+#                         "orange" : [np.array([11, 43, 46]), np.array([25, 255, 255])],\
+#                         "purple" : [np.array([11, 43, 46]), np.array([25, 255, 255])]
+#                     }
+#         #add the corresponding color point array into the result dict
+#         for col_key in ranges:
+#             pic_copy = hsv
+#             curr = cv.inRange(pic_copy, ranges[col_key][0], ranges[col_key][1])
+#             # print(curr)
+#             if col_key not in result:
+#                 result[col_key] = []
+            
+#             #TODO: check output format of cv.inRange
+#                 #print("size is ", curr.size)
+                
+#                 print(curr.size, curr.size)
+#                 for r in range (curr[0].size):
+#                     for c in range (curr[1].size):
+#                         if curr[r][c] == 255:
+#                             result[col_key].append((r, c))
+#             print(result)
+#             # #result[col_key].append(curr)
+       
+#     return result
 
 
 #------------------CHANGE CODE ABOVE HERE ONLY--------------------------
@@ -164,7 +127,6 @@ def main():
     # rangeFinder.enable(timestep)
     
     lidar = robot.getDevice("lidar")
-    lidar.horizontalResolution = 720
     lidar.enable(timestep)
     lidar.enablePointCloud()
     
@@ -178,14 +140,15 @@ def main():
     br.setPosition(float('inf'))
     bl.setPosition(float('inf'))
     
-    
+    #test camera
     i=0
            
 
     #------------------CHANGE CODE ABOVE HERE ONLY--------------------------
     
     
-    while(robot_not_dead == 1):
+    while(robot_not_dead == 8):
+        
         
         if(robot_info[0] < 0):
            
@@ -199,6 +162,8 @@ def main():
             #exit()
             
         if(timer%2==0):
+            
+            
             trans = trans_field.getSFVec3f()
             robot_info = check_berry_collision(robot_info, trans[0], trans[2], robot)
             robot_info = check_zombie_collision(robot_info, trans[0], trans[2], robot)
@@ -215,11 +180,49 @@ def main():
         
      #------------------CHANGE CODE BELOW HERE ONLY--------------------------   
         
+        # get image from camera sensor
+        pic = camera8.getImageArray()
+        result = {}
+        if pic:
+            # convert rgb bytes to hsv array
+            pic = np.uint8(pic)
+            hsv = cv.cvtColor(pic, cv.COLOR_BGR2HSV)
+            # define color thresholds
+            ranges =    {
+                            "black" : [np.array([0, 0, 0]), np.array([180, 255, 46])],\
+                            "grey" : [np.array([0, 0, 46]), np.array([180, 43, 220])],\
+                            "white" : [np.array([0, 0, 221]), np.array([180, 30, 225])],\
+                            "red" : [np.array([0, 43, 46]), np.array([10, 255, 225])],\
+                            "red2" : [np.array([156, 43, 46]), np.array([180, 255, 225])],\
+                            "yellow" : [np.array([26, 43, 46]), np.array([34, 255, 225])],\
+                            "green" : [np.array([35, 43, 46]), np.array([77, 255, 225])],\
+                            "aqua" : [np.array([78, 43, 46]), np.array([99, 255, 225])],\
+                            "blue" : [np.array([100, 43, 46]), np.array([124, 255, 255])], \
+                            "orange" : [np.array([11, 43, 46]), np.array([25, 255, 255])],\
+                            "purple" : [np.array([11, 43, 46]), np.array([25, 255, 255])]
+                        }
+            #add the corresponding color point array into the result dict
+            for col_key in ranges:
+                pic_copy = hsv
+                curr = cv.inRange(pic_copy, ranges[col_key][0], ranges[col_key][1])
+                # print(curr)
+                if col_key not in result:
+                    result[col_key] = []
+                
+                #TODO: check output format of cv.inRange
+                    #print("size is ", curr.size)
+                    
+                    print(curr.size, curr.size)
+                    for r in range (curr[0].size):
+                        for c in range (curr[1].size):
+                            if curr[r][c] == 255:
+                                result[col_key].append((r, c))
+                print(result)
+                # #result[col_key].append(curr)
         # range_image = lidar.getRangeImage()
         # range_image = lidar.getRangeImage()
         # print(range_image)
-        # image = camera8.getImageArray()
-        # print(image)
+        
          #called every timestep
         
         

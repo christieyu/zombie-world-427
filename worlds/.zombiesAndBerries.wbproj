@@ -4,7 +4,8 @@ simulationViewPerspectives: 000000ff00000001000000020000011800000513010000000201
 sceneTreePerspectives: 000000ff0000000100000002000000c0000000fc0100000002010000000200
 maximizedDockId: -1
 centralWidgetVisible: 1
-orthographicViewHeight: 1
+projectionMode: ORTHOGRAPHIC
+orthographicViewHeight: 29.7891
 textFiles: 0 "controllers/youbot_controller/youbot_controller.py"
 globalOptionalRendering: LidarRaysPaths::LidarPointClouds
 consoles: Console:All:All
