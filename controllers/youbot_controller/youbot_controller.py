@@ -12,10 +12,10 @@ import math
 class robotPathfinder:
     "pathfinding manager for robot. avoids zombies and seeks berries depending on current robot state. \
     default state is to seek berries"
-    def __init__(self, state = "seek", threshold = 8):
+    def __init__(self, state = "sentry"):
         self.st = state
-        self.states = ["avoid","seek","survive"]
-        self.threshold = threshold
+        # avoid is cautious, seek is find berries, survive is last stand
+        self.states = ["sentry", "turn&ID", "seekBerry", "survive"]
         self.berries =  {
             # Set "points" for berries:
                 # negative pts = bad result — do not try again
@@ -28,12 +28,7 @@ class robotPathfinder:
                             "orange": {},
                             "pink": {}
                         }
-        self.dangerZ = set("p","o")
-
-    def distance(self,point):
-        "finds distance from a lidar point to (0,0)"
-        x, y, z = point
-        return math.sqrt((x**2)+(y**2)+(z**2))
+        self.dangerZ = set("p")
 
     def identify(self, item):
         "determines if item is zombie, tree, or berry. If zombie, or berry, also returns what color. \
@@ -54,6 +49,23 @@ class robotPathfinder:
         "robot drives in direction of item"
         pass
 
+    def range4_10(self, lst):
+        for val in lst:
+            if 4 <= val <= 10:
+                return True
+        return False
+
+    def range0_4(self, lst):
+        for val in lst:
+            if 0 <= val <= 4:
+                return True
+        return False
+
+    def berryAction(self, berrycolor):
+        "makes choices about whether to eat or not eats berries"
+        # implement code to eat berries
+        pass
+
     def tryBerry(self, berrycolor):
         "tries berry and returns appropriate # of pts to berries dict"
         if len(self.berries[berrycolor]) < 2:
@@ -69,42 +81,63 @@ class robotPathfinder:
             if robot_info[2] > old_stats[2] + buffer:
                 self.berries[berrycolor].add(3)
 
+    def eatBerry(self):
+        "move towards berry and eat it"
+        pass
+
     def treeAction(self):
         "make choice about whether to approach or avoid tree"
         pass
 
-    def pathfind(self, lidar_output):
-        "top level controller for pathfinding. function for getting lidar output is passed as param"
-
+    def pathfind(self, lidar_output, reciver_output, camera_output):
+        "top level controller for pathfinding. functions for output from sensors are passed as paramaters\
+        each cycle of loop determines what state to be in. Actions are taken by takeAction function"
         while True:
             # go through each point in lidar output, determine appropriate action if item is within action threshold
-            output = lidar_output()
-            if not output:
-                self.st = "seek" # randomly wander until we find an energy berry, and then enter eat berry state
+            lidarOut = lidar_output()
+            recOut = reciver_output()
+            camOut = camera_output()
 
-            for point in :
-                if self.distance(point) <= self.threshold:
-                    objectID, color = self.identify(point)
+            if not recOut and not lidarOut:
+                self.st = "sentry"
+            elif not recOut and self.range4_10(lidarOut)
+               self.st = "turn&ID"
+            elif not recOut and self.range0_4(lidarOut):
+                self.st = "seekBerry"
+            elif rec:
+                self.st = "survive"
+            else:
+                self.st = "sentry"
 
-                    # if zombie, set state to avoid or survive based on danger level, call escape() function
-                    if objectID == "z":
-                        if color in self.dangerZ:
-                            self.st = "avoid"
-                        else:
-                            self.st = "survive"
-                        self.escape()
+            self.takeAction(lidarOut, recOut, camOut)
+        return
 
-                    # if berry and robot is not in avoid or survive states, call eatBerry function
-                    elif objectID == "b":
-                        if self.state == "seek":
-                            self.eatBerries(color)
-                        pass
 
-                    # if tree and robot is not in avoid or survive states, call treAction function
-                    elif objectID == "t":
-                        if self.state == "seek":
-                            self.treeAction()
-                        pass
+
+
+                # for point in output:
+                #     if point <= 10 and not reciever:
+                #         objectID, color = self.identify(point)
+                #
+                #         # if zombie, set state to avoid or survive based on danger level, call escape() function
+                #         if objectID == "z":
+                #             if color in self.dangerZ:
+                #                 self.st = "avoid"
+                #             else:
+                #                 self.st = "survive"
+                #             self.escape()
+                #
+                #     # if berry and robot is not in avoid or survive states, call eatBerry function
+                #     elif objectID == "b":
+                #         if self.state == "seek":
+                #             self.berryAction(color)
+                #         pass
+                #
+                #     # if tree and robot is not in avoid or survive states, call treAction function
+                #     elif objectID == "t":
+                #         if self.state == "seek":
+                #             self.treeAction()
+                #         pass
 
             #may need to add a time delay here before entering next iteration of loop
     
