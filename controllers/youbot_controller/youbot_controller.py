@@ -61,7 +61,7 @@ class robotPathFinder:
             self.survive(lidarOut, camOut, recOut)
         return
 
-    def sentry(self, lidarOut, camOut, recOut):
+    def sentry(self, lidarOut, camOut):
         "do nothing. If low health or low energy, turn&ID"
         if self.robot.health <= 20 or self.robot.energy <= 20:
             self.turnID(lidarOut, camOut)
@@ -170,17 +170,30 @@ class robotPathFinder:
             ret.append(ispeak(indx, lst))
         return ret
 
+    def compressLidar(self, lst):
+        ret = [0] * 360
+        for i in range(len(lst) - 1):
+            ni = int(i / (512 / 360.0))
+            print(i, ni)
+            if ret[ni] == 0:
+                ret[ni] = lst[i]
+            else:
+                ret[ni] = (ret[ni] + lst[i]) / 2.0
+        ret[-1] = (ret[0] + ret[-2]) / 0.2
+        return ret
+
     def pathfinder(self, lidar_output, reciver_output, camera_output):
         "top level controller for pathfinding. functions for output from sensors are passed as paramaters\
         each cycle of loop determines what state to be in. Actions are taken by takeAction function"
         while True:
             # go through each point in lidar output, determine appropriate action if item is within action threshold
             lidarOut = lidar_output()
+            lidarOut = self.compressLidar(lidarOut)  # compress lidarOut into len 360 array
             recOut = reciver_output()
             camOut = camera_output()
 
             procLidar = self.averageWindow(lidarOut)
-            procLidar = map(lambda x: x * -1, procLidar)  # turn peaks into troughs
+            procLidar = list(map(lambda x: x * -1, procLidar))  # turn peaks into troughs
             procLidar = self.peaks(procLidar)
 
             if not recOut and not any(procLidar):
