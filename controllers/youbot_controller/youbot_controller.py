@@ -288,6 +288,8 @@ def main():
         
         # get image from camera sensor
         pic = camera8.getImageArray()
+        # camera8.getImage()
+        # camera8.saveImage("image.jpg", 100)
         result = {}
         if pic:
             # convert rgb bytes to hsv array
@@ -295,20 +297,20 @@ def main():
             hsv = cv.cvtColor(pic, cv.COLOR_BGR2HSV)
             # define color thresholds
             ranges =    {
-                            "black" : [np.array([0, 0, 0]), np.array([180, 255, 46])],\
+                            "red" : [np.array([112, 180, 46]), np.array([120, 210, 210])],\
+                            "pink" : [np.array([137, 85, 46]), np.array([160, 120, 200])],\
+                            "yellow" : [np.array([86, 43, 46]), np.array([95, 256, 256])],\
+                            "green" : [np.array([55, 43, 46]), np.array([65, 256, 256])],\
+                            "aqua" : [np.array([25, 43, 46]), np.array([40, 256, 256])],\
+                            "blue" : [np.array([8, 43, 46]), np.array([20, 256, 256])], \
+                            "orange" : [np.array([108, 120, 46]), np.array([113, 150, 200])],\
+                            "purple" : [np.array([162, 43, 46]), np.array([175, 256, 256])],\
+                            "black" : [np.array([0, 0, 0]), np.array([180, 256, 46])],\
                             "grey" : [np.array([0, 0, 46]), np.array([180, 43, 220])],\
-                            "white" : [np.array([0, 0, 221]), np.array([180, 30, 225])],\
-                            "red" : [np.array([0, 43, 46]), np.array([10, 255, 225])],\
-                            "red2" : [np.array([156, 43, 46]), np.array([180, 255, 225])],\
-                            "yellow" : [np.array([26, 43, 46]), np.array([34, 255, 225])],\
-                            "green" : [np.array([35, 43, 46]), np.array([77, 255, 225])],\
-                            "aqua" : [np.array([78, 43, 46]), np.array([99, 255, 225])],\
-                            "blue" : [np.array([100, 43, 46]), np.array([124, 255, 255])], \
-                            "orange" : [np.array([11, 43, 46]), np.array([25, 255, 255])],\
-                            "purple" : [np.array([11, 43, 46]), np.array([25, 255, 255])]
+                            "white" : [np.array([0, 0, 221]), np.array([180, 30, 256])],\
                         }
             # get the predominant color of the central 3x3 matrix
-            # # print(len(pic), len(pic[0]))
+            # print(len(pic), len(pic[0]))
             # avg = np.array([0, 0, 0])
             # # color_tally = 0
             # for row in range((len(pic) // 2 - 1), (len(pic) // 2) + 1):
@@ -325,30 +327,34 @@ def main():
             #     if all(np.less(ranges[color][0], avg)) and all(np.less(avg, ranges[color][1])):
             #         print(color)
 
-            for row in range(0, 64):
-                for col in range(63, 65):
-                    pixel = pic[row][col]
-                    for color in ranges:
-                        if all(np.less(ranges[color][0], pixel)) and all(np.less(pixel, ranges[color][1])):
-                            print(color)
+            # for row in range(0, 64):
+                # for col in range(63, 65):
+                    # pixel = pic[row][col]
+                    # for color in ranges:
+                        # if all(np.less(ranges[color][0], pixel)) and all(np.less(pixel, ranges[color][1])):
+                            # print(color)
 
 
-            # for col_key in ranges:
-            #     pic_copy = hsv
-            #     curr = cv.inRange(pic_copy, ranges[col_key][0], ranges[col_key][1])
-            #     # print(curr)
-            #     if col_key not in result:
-            #         result[col_key] = []
+            for col_key in ranges:
+                pic_copy = hsv
+                curr = cv.inRange(pic_copy, ranges[col_key][0], ranges[col_key][1])
+                # print(curr)
+                #print(hsv[(hsv[0].size)//2][hsv[0][0].size//2])
+                print(hsv[len(hsv)//2][len(hsv[0])//2])
+                if col_key not in result:
+                    result[col_key] = []
                 
-            #     #TODO: check output format of cv.inRange
-            #         #print("size is ", curr.size)
+                #TODO: check output format of cv.inRange
+                    #print("size is ", curr.size)
                     
-            #         print(curr.size, curr.size)
-            #         for r in range (curr[0].size):
-            #             for c in range (curr[1].size):
-            #                 if curr[r][c] == 255:
-            #                     result[col_key].append((r, c))
-            #     print(result)
+                    # print(curr.size, curr.size)
+                    for r in range (curr[0].size):
+                        for c in range (curr[1].size):
+                            if curr[r][c] == 255:
+                                result[col_key].append((r, c))
+                            # print(curr[r//2 + 10][c//2 + 30])
+                for k, v in result.items():
+                    print(k, len(v))
         
         #called every timestep
         
