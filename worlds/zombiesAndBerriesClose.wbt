@@ -1,0 +1,413 @@
+#VRML_SIM R2021b utf8
+WorldInfo {
+  basicTimeStep 128
+  coordinateSystem "NUE"
+  contactProperties [
+    ContactProperties {
+      material1 "ExteriorWheelMat"
+      coulombFriction [
+        0, 2, 0
+      ]
+      frictionRotation 0.785398 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+    ContactProperties {
+      material1 "InteriorWheelMat"
+      coulombFriction [
+        0, 2, 0
+      ]
+      frictionRotation -0.785398 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation 0.47756485767984364 -0.8550282212741263 -0.20213497355488685 5.394974210561848
+  position 23.348368305823016 13.721567723321085 18.167060499988693
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+  castShadows FALSE
+}
+RectangleArena {
+  floorSize 25 25
+  floorTileSize 50 50
+}
+DEF Youbot Youbot {
+  hidden position_0_0 1.7561498806307622e-07
+  hidden position_0_1 1.9401090500775176e-07
+  hidden position_0_2 1.2576290796687005e-07
+  hidden position_0_3 1.1379178855375434e-07
+  hidden linearVelocity_0 5.330206416524904e-06 -0.0005968718329828225 2.895728974160102e-07
+  hidden angularVelocity_0 4.112496317379342e-06 -6.56744944974136e-08 -7.931102411122039e-05
+  hidden position_17_0 -1.2218277477561062e-05
+  hidden rotation_18 0 0 -1 1.2218261617844048e-05
+  hidden position_18_0 -1.1367438133130088e-06
+  hidden linearVelocity_18 1.9688376932048313e-05 -0.0006261531056031627 2.8020557730508e-06
+  hidden angularVelocity_18 3.0808480386293694e-06 -0.00012143463027557963 -7.973515106454997e-05
+  hidden rotation_19 0 1 0 1.1367935611463134e-06
+  hidden position_19_0 -1.703572280928753e-06
+  hidden linearVelocity_19 2.3462827950474656e-05 -0.0006368936077889257 5.374526374468704e-06
+  hidden angularVelocity_19 3.155961398241966e-06 -0.00012143637504602999 -9.04586591116082e-05
+  hidden rotation_20 0 1 0 1.7036921892114739e-06
+  hidden position_20_0 -5.345271780754501e-09
+  hidden linearVelocity_20 4.3768395293292685e-05 -0.0006427688685644578 5.98616783544e-06
+  hidden angularVelocity_20 3.1555668231784486e-06 -0.00012143987829945068 -0.00010715525540928793
+  hidden position_21_0 -1.1599878583114983e-08
+  hidden linearVelocity_21 5.132392425303871e-05 -0.0006462245830517252 6.3753245358538816e-06
+  hidden angularVelocity_21 3.1555506511626982e-06 -0.00012143985726309936 -0.00010715505662565386
+  hidden position_22_0 6.850778259268068e-11
+  hidden position_22_1 -6.918063368180306e-11
+  hidden linearVelocity_22 6.204070893751196e-05 -0.0006471811611225094 6.7912089756241425e-06
+  hidden angularVelocity_22 3.1545993625526537e-06 -0.00012155453768732162 -0.0001071557398574443
+  hidden translation_23 0 6.850778259268068e-11 0.09
+  hidden linearVelocity_23 7.02224613824944e-05 -0.0006472961329021611 7.065767677454649e-06
+  hidden angularVelocity_23 3.1541819030211986e-06 -0.00012155453992951422 -0.0001071557791704187
+  hidden translation_24 0 6.918063368180306e-11 0.09
+  hidden linearVelocity_24 6.779178531190679e-05 -0.0006473517821071103 7.057371885492087e-06
+  hidden angularVelocity_24 3.1550166826821483e-06 -0.0001215545353309446 -0.00010715577677087283
+  hidden rotation_25 0 1 0 1.7631291696726137e-07
+  hidden linearVelocity_25 2.4326690173448506e-06 -0.0006087039289835141 1.769658649402039e-06
+  hidden angularVelocity_25 4.0428327630194665e-06 -6.579824882154157e-08 -8.137837630929413e-05
+  hidden rotation_26 0 1 0 1.931411236050088e-07
+  hidden linearVelocity_26 2.25501313847688e-06 -0.0006075144074989692 -1.517239776607226e-06
+  hidden angularVelocity_26 4.207909826777888e-06 -6.598900491320121e-08 -8.159944773987567e-05
+  hidden rotation_27 0 1 0 1.264405455326821e-07
+  hidden linearVelocity_27 3.0486727125156345e-06 -0.000569566614858275 -1.0282642886050293e-06
+  hidden angularVelocity_27 4.179994526850043e-06 -6.581372045997161e-08 -8.080150562670746e-05
+  hidden rotation_28 0 1 0 1.1542389828584842e-07
+  hidden linearVelocity_28 3.2022456880120873e-06 -0.0005683770933936235 1.3165173182794207e-06
+  hidden angularVelocity_28 4.062257118832541e-06 -6.568007088114562e-08 -8.065355899277965e-05
+  translation 0.00019444609070140648 0.08559990033766751 1.0599028492280371e-05
+  rotation -0.9999798125758008 0.002399353780955665 -0.005883667419211951 1.5709931577862013
+  controller "youbot_controller"
+  supervisor TRUE
+  bodySlot [
+    Accelerometer {
+    }
+    GPS {
+    }
+    Compass {
+    }
+    DEF ForwardLowResBigFov Camera {
+      translation 0.3 0 0
+      rotation 0.5773506025225371 -0.5773506025225371 -0.5773496025232256 2.09439
+      name "ForwardLowResBigFov"
+      fieldOfView 1
+      width 128
+    }
+    DEF ForwardHighResSmallFov Camera {
+      translation 0.3 0 0
+      rotation 0.5773506025225371 -0.5773506025225371 -0.5773496025232256 2.09439
+      name "ForwardHighResSmallFov"
+      fieldOfView 0.5
+      width 256
+      height 128
+    }
+    DEF ForwardHighResBigFov Camera {
+      translation 0.3 0 0
+      rotation 0.5773506025225371 -0.5773506025225371 -0.5773496025232256 2.09439
+      name "ForwardHighRes"
+      fieldOfView 1
+      width 256
+      height 128
+    }
+    DEF ForwardHighResSmallFov Camera {
+      translation 0.3 0 0
+      rotation 0.5773506025225371 -0.5773506025225371 -0.5773496025232256 2.09439
+      name "ForwardHighResSmall"
+      fieldOfView 0.5
+      width 256
+      height 128
+    }
+    DEF BackLowRes Camera {
+      translation -0.27 -2.00826e-06 1.02099e-06
+      rotation 0.5773486025216047 0.5773526025188509 0.5773496025209163 2.0944
+      name "BackLowRes"
+      fieldOfView 1
+      width 128
+    }
+    DEF RightLowRes Camera {
+      translation -0.00999658 -0.200002 1.57252e-06
+      rotation -6.106782428407177e-07 0.7071072811864377 0.70710628118604 -3.1415853071795863
+      name "RightLowRes"
+      fieldOfView 1
+      width 128
+    }
+    DEF LeftLowRes Camera {
+      translation -0.00999894 0.189998 -2.08147e-07
+      rotation -0.9999999999879128 -4.8411699999414835e-06 -8.588339999896191e-07 -1.5707953071795862
+      name "LeftLowRes"
+      fieldOfView 1
+      width 128
+    }
+    DEF BackHighRes Camera {
+      translation -0.27 -2.00826e-06 1.02099e-06
+      rotation 0.5773486025216047 0.5773526025188509 0.5773496025209163 2.0944
+      name "BackHighRes"
+      fieldOfView 1
+      width 256
+      height 128
+    }
+    Gyro {
+    }
+    LightSensor {
+    }
+    Receiver {
+    }
+    RangeFinder {
+      translation 0.41 0 0
+      rotation -0.5773502691896258 0.5773502691896258 0.5773502691896258 -2.0944
+      maxRange 5
+    }
+    Lidar {
+      rotation 0.5773509358554485 0.5773489358556708 0.5773509358554485 2.0944
+      numberOfLayers 1
+      near 0.3
+      minRange 0.3
+      maxRange 10
+      type "rotating"
+    }
+    Group {
+    }
+  ]
+}
+DEF Berry0 Solid {
+  translation 0.23018031298324848 0.04602982152987275 -11.420090156491618
+  rotation -0.44721359550344353 2.8771882240987945e-11 -0.8944271909981731 8.273256678842378e-05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.2 0.1
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(6)"
+  boundingObject DEF BOX Box {
+    size 0.1 0.1 0.1
+  }
+  physics Physics {
+  }
+  linearVelocity -6.952072127844146e-06 0.00469149551940652 3.476036063959647e-06
+  angularVelocity 6.952039506096234e-05 -5.424373886215857e-16 0.0001390407901240565
+}
+DEF Berry1 Solid {
+  translation 8.310024587175088 0.04836392770337331 -11.420077293587543
+  rotation -0.4472135955122703 9.038065372366559e-11 -0.8944271909937597 3.2297947706049155e-05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.2 0.1
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(1)"
+  boundingObject DEF BOX Box {
+    size 0.1 0.1 0.1
+  }
+  physics Physics {
+  }
+  linearVelocity -2.700304698766844e-06 0.00012951258434259214 1.3501523493247737e-06
+  angularVelocity 2.700357441014488e-05 -6.741026991966333e-17 5.400714882668464e-05
+}
+DEF Berry2 Solid {
+  translation 10.060054586670068 0.048333520175491564 -10.300077293335034
+  rotation -0.44721359551733125 7.531289892216813e-11 -0.8944271909912291 3.229908856564373e-05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.2 0.1
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(2)"
+  boundingObject DEF BOX Box {
+    size 0.1 0.1 0.1
+  }
+  physics Physics {
+  }
+  linearVelocity -2.7003949639771457e-06 0.00018875764597714803 1.3501974818561954e-06
+  angularVelocity 2.700447707795204e-05 -6.665810480538109e-16 5.400895416336479e-05
+}
+DEF Berry3 Solid {
+  translation 1.1400246539146097 0.04648979273977529 8.099922673042698
+  rotation -0.4472135954826226 8.002862546325512e-11 -0.8944271910085834 3.3747313180193896e-05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0.2 0.1
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(3)"
+  boundingObject DEF BOX Box {
+    size 0.1 0.1 0.1
+  }
+  physics Physics {
+  }
+  linearVelocity -2.83579161684472e-06 0.003792564848016899 1.4178958081577034e-06
+  angularVelocity 2.8357782973031987e-05 7.798165628291149e-16 5.6715565956721925e-05
+}
+DEF zombie0 Pedestrian {
+  translation -1.80111 1.27 -1.50032
+  rotation 0 1 0 0.8080057916952201
+  name "pedestrian1"
+  controller "blue_zombie"
+  controllerArgs [
+    "--trajectory=\"\""
+    "--speed=1.5"
+  ]
+  shirtColor 0 0.5 1
+  pantsColor 0 0.5 1
+  shoesColor 0 0.5 1
+  skinColor 0 0.5 1
+  bodySlot [
+    Emitter {
+      range 4
+      channel -1
+    }
+  ]
+  rightLegAngle 0.23563636363636417
+  rightLowerLegAngle 0.13490909090909156
+  rightFootAngle 0.40472727272727466
+  leftLegAngle -1.1294545454545468
+  leftLowerLegAngle 1.705272727272728
+  leftFootAngle -0.06490909090909155
+  rightArmAngle -0.34072727272727515
+  rightLowerArmAngle -0.5698181818181831
+  rightHandAngle -0.24709090909090947
+  leftArmAngle 0.5534545454545489
+  leftLowerArmAngle -0.6803636363636388
+  leftHandAngle 0.11563636363636419
+  headAngle 0.003272727272726854
+}
+DEF zombie1 Pedestrian {
+  translation -7.36957434510505 1.27 9.023185654894956
+  rotation 0 1 0 1.8852529804330342
+  name "pedestrian(1)"
+  controller "green_zombie"
+  controllerArgs [
+    "--trajectory=\"\""
+    " --speed=1.5"
+  ]
+  shirtColor 0 0.7 0
+  pantsColor 0 0.7 0
+  shoesColor 0 0.7 0
+  skinColor 0 0.7 0
+  bodySlot [
+    Emitter {
+      range 4
+      channel -1
+    }
+  ]
+  leftHandSlot [
+    Emitter {
+    }
+  ]
+  rightLegAngle 0.23563636363636417
+  rightLowerLegAngle 0.13490909090909156
+  rightFootAngle 0.40472727272727466
+  leftLegAngle -1.1294545454545468
+  leftLowerLegAngle 1.705272727272728
+  leftFootAngle -0.06490909090909155
+  rightArmAngle -0.34072727272727515
+  rightLowerArmAngle -0.5698181818181831
+  rightHandAngle -0.24709090909090947
+  leftArmAngle 0.5534545454545489
+  leftLowerArmAngle -0.6803636363636388
+  leftHandAngle 0.11563636363636419
+  headAngle 0.003272727272726854
+}
+DEF zombie4 Pedestrian {
+  translation -1.02405 1.27 0.462557
+  rotation 0 1 0 1.926176317174615
+  name "pedestrian(5)"
+  controller "purple_zombie"
+  controllerArgs [
+    "--trajectory=\"\""
+    " --speed=1.5"
+  ]
+  shirtColor 0.6 0.2 1
+  pantsColor 0.6 0.2 1
+  shoesColor 0.6 0.2 1
+  skinColor 0.6 0.2 1
+  bodySlot [
+    Emitter {
+      range 4
+      channel -1
+    }
+  ]
+  rightLegAngle 0.23563636363636417
+  rightLowerLegAngle 0.13490909090909156
+  rightFootAngle 0.40472727272727466
+  leftLegAngle -1.1294545454545468
+  leftLowerLegAngle 1.705272727272728
+  leftFootAngle -0.06490909090909155
+  rightArmAngle -0.34072727272727515
+  rightLowerArmAngle -0.5698181818181831
+  rightHandAngle -0.24709090909090947
+  leftArmAngle 0.5534545454545489
+  leftLowerArmAngle -0.6803636363636388
+  leftHandAngle 0.11563636363636419
+  headAngle 0.003272727272726854
+}
+DEF zombie5 Pedestrian {
+  translation 2.50486 1.27 -1.48162
+  rotation 0 1 0 0.3674697495597089
+  name "pedestrian(4)"
+  controller "acqua_zombie"
+  controllerArgs [
+    "--trajectory=\"\""
+    " --speed=1.5"
+  ]
+  shirtColor 0 0.9 0.7
+  pantsColor 0 0.9 0.7
+  shoesColor 0 0.9 0.7
+  skinColor 0 0.9 0.7
+  bodySlot [
+    Emitter {
+      range 4
+      channel -1
+    }
+  ]
+  rightLegAngle 0.23563636363636417
+  rightLowerLegAngle 0.13490909090909156
+  rightFootAngle 0.40472727272727466
+  leftLegAngle -1.1294545454545468
+  leftLowerLegAngle 1.705272727272728
+  leftFootAngle -0.06490909090909155
+  rightArmAngle -0.34072727272727515
+  rightLowerArmAngle -0.5698181818181831
+  rightHandAngle -0.24709090909090947
+  leftArmAngle 0.5534545454545489
+  leftLowerArmAngle -0.6803636363636388
+  leftHandAngle 0.11563636363636419
+  headAngle 0.003272727272726854
+}

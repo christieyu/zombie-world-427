@@ -153,7 +153,7 @@ class robotPathFinder:
 
             if not recOut and not lidarOut:
                 self.st = "sentry"
-            elif not recOut and self.range4_10(lidarOut)
+            elif not recOut and self.range4_10(lidarOut):
                self.st = "turn&ID"
             elif not recOut and self.range0_4(lidarOut):
                 self.st = "berryAction"
@@ -236,6 +236,7 @@ def main():
     
     lidar = robot.getDevice("lidar")
     lidar.enable(timestep)
+    lidar.enablePointCloud()
     
     fr = robot.getDevice("wheel1")
     fl = robot.getDevice("wheel2")
@@ -283,8 +284,24 @@ def main():
         timer += 1
         
      #------------------CHANGE CODE BELOW HERE ONLY--------------------------   
-         #called every timestep
-        
+        # the following is called every timestep
+
+        # lidar output ---> array of distances of length 512 (our horizontal resolution)
+        lid_out = lidar.getRangeImage()
+        print(lid_out)
+
+        # receiver output ---> ['a', 'p', 'g', 'b']
+        import struct
+        rec_out = []
+        while (receiver.getQueueLength() > 0):
+            message = receiver.getData()
+            dataList = struct.unpack("chd", message)
+            dir = receiver.getEmitterDirection()
+            signal = receiver.getSignalStrength()
+            # print(f"message is {message} and {dataList}, dir is {dir}, signal is {signal}")
+            receiver.nextPacket()
+            rec_out.append(dataList[0].decode('utf-8'))
+        print(rec_out)
         
         #possible pseudocode for moving forward, then doing a 90 degree left turn
         #if i <100
