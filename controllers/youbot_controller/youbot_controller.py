@@ -9,13 +9,15 @@ import math
 #------------------CHANGE CODE BELOW HERE ONLY--------------------------
 #define functions here for making decisions and using sensor inputs
 
-class robotPathfinder:
+class robotPathFinder:
     "pathfinding manager for robot. avoids zombies and seeks berries depending on current robot state. \
     default state is to seek berries"
-    def __init__(self, state = "sentry"):
+    def __init__(self, robot, state = "sentry"):
+        self.robot = robot
         self.st = state
-        # avoid is cautious, seek is find berries, survive is last stand
-        self.states = ["sentry", "turn&ID", "seekBerry", "survive"]
+        self.edible = {} #set of all edible berries
+        self.pZ = 0 # boolean representing if we have seen a purple zombie
+        self.states = ["sentry", "turn&ID", "berryAction", "survive"]
         self.berries =  {
             # Set "points" for berries:
                 # negative pts = bad result — do not try again
@@ -28,26 +30,7 @@ class robotPathfinder:
                             "orange": {},
                             "pink": {}
                         }
-        self.dangerZ = set("p")
 
-    def identify(self, item):
-        "determines if item is zombie, tree, or berry. If zombie, or berry, also returns what color. \
-        second term if empty string if is tree"
-        return ("z","g")
-
-    def escape(self):
-        "Makes robot drive away from threat at normal speed if not dangerous zombie, at max speed \
-        if super dangerous zombie"
-        # implement code to drive robot in the most open direction for 5 seconds
-        if self.st == "avoid":
-            #run away at normal speed
-        if self.st == "survive":
-            #run away really really really fast
-        pass
-
-    def approach(self, item):
-        "robot drives in direction of item"
-        pass
 
     def range4_10(self, lst):
         for val in lst:
@@ -61,10 +44,77 @@ class robotPathfinder:
                 return True
         return False
 
-    def berryAction(self, berrycolor):
-        "makes choices about whether to eat or not eats berries"
-        # implement code to eat berries
+    def move(self, direction):
+        self.robot.turn(direction) # turn to correct direction
+        self.robot.forward(.5) # move forward .5 meters
+        return
+
+    def takeAction(self, lidarOut, recOut, camOut):
+        if self.st == "sentry":
+            self.sentry(lidarOut, camOut, recOut)
+        elif self.st == "turn&ID":
+            self.turnID(lidarOut, camOut, recOut)
+        elif self.st == "berryAction":
+            self.berryAction(lidarOut, camOut)
+        elif self.st == "survive":
+            self.survive(lidarOut, camOut, recOut)
+        return
+
+    def sentry(self, lidarOut, camOut, recOut):
+        "do nothing. If low health or low energy, turn&ID"
+        if self.robot.health <= 20 or self.robot.energy <= 20:
+            self.turnID(lidarOut, camOut)
+        return
+
+    def turnID(self, lidarOut, camOut, recOut):
         pass
+
+    def survive(self, lidarOut, camOut, recOut):
+        "survival mode. determine free space and run away. if abg zombie, go back to start and potentially sentry. \
+        if purple, stay in survival"
+        while true:
+            # best direction is that of most avail space, naive implementation, may need to change later
+            direction = lidarOut.index(max(lidarOut))
+            if 'p' not in recOut:
+                self.move(direction)
+                break
+            else:
+                self.move(direction)
+        return
+
+    def identify(self, direction, camOut):
+        "determines if item is zombie, tree, or berry. If zombie, or berry, also returns what color. \
+        second term if empty string if is tree"
+        self.robot.turn((180+direction)%360) # turn so back of robot faces the direction
+        color = camOut[len(camOut)//2] # find the color of what is at the middle of the array returned by camera
+        if color == 'b':
+            return 'tree', ""
+        elif color in list("abgp"):
+            return 'zomb', color
+        else:
+            return 'berry', color
+
+    def berryAction(self, lidarOut, camOut, direction = None):
+        "makes choices about whether to eat or not eats berries"
+        # If direction is None, then that means this was directly called by pathfinder
+        if direction is None:
+            direction = lidarOut.index(min(lidarOut))
+            self.move(direction)
+            return
+
+        # if purple zombie has been seen, then don't eat berries that aren't already within 4m safe range and don't approach trees
+        if self.pZ:
+            return
+
+        item, color = self.identify(direction, lidarOut)
+        if item == 'tree': #if item is tree, then do tree action
+            self.treeAction(direction, lidarOut)
+            return
+
+        # if berry is edible, eat it by moving towards it
+        if color in self.edible:
+            self.move(direction)
+        return
 
     def tryBerry(self, berrycolor):
         "tries berry and returns appropriate # of pts to berries dict"
@@ -80,16 +130,19 @@ class robotPathfinder:
                 self.berries[berrycolor].add(2)
             if robot_info[2] > old_stats[2] + buffer:
                 self.berries[berrycolor].add(3)
+        return
 
-    def eatBerry(self):
-        "move towards berry and eat it"
-        pass
-
-    def treeAction(self):
+    def treeAction(self, direction, lidarOut):
         "make choice about whether to approach or avoid tree"
-        pass
+        armReach = 0.1
+        if lidarOut[direction] > armReach:
+            self.move(direction)
+        else:
+            self.robot.arm.move()
+        return
 
-    def pathfind(self, lidar_output, reciver_output, camera_output):
+
+    def pathfinder(self, lidar_output, reciver_output, camera_output):
         "top level controller for pathfinding. functions for output from sensors are passed as paramaters\
         each cycle of loop determines what state to be in. Actions are taken by takeAction function"
         while True:
@@ -103,44 +156,13 @@ class robotPathfinder:
             elif not recOut and self.range4_10(lidarOut)
                self.st = "turn&ID"
             elif not recOut and self.range0_4(lidarOut):
-                self.st = "seekBerry"
+                self.st = "berryAction"
             elif rec:
                 self.st = "survive"
             else:
                 self.st = "sentry"
-
             self.takeAction(lidarOut, recOut, camOut)
-        return
 
-
-
-
-                # for point in output:
-                #     if point <= 10 and not reciever:
-                #         objectID, color = self.identify(point)
-                #
-                #         # if zombie, set state to avoid or survive based on danger level, call escape() function
-                #         if objectID == "z":
-                #             if color in self.dangerZ:
-                #                 self.st = "avoid"
-                #             else:
-                #                 self.st = "survive"
-                #             self.escape()
-                #
-                #     # if berry and robot is not in avoid or survive states, call eatBerry function
-                #     elif objectID == "b":
-                #         if self.state == "seek":
-                #             self.berryAction(color)
-                #         pass
-                #
-                #     # if tree and robot is not in avoid or survive states, call treAction function
-                #     elif objectID == "t":
-                #         if self.state == "seek":
-                #             self.treeAction()
-                #         pass
-
-            #may need to add a time delay here before entering next iteration of loop
-    
 
 
 #------------------CHANGE CODE ABOVE HERE ONLY--------------------------
