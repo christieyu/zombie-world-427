@@ -28,8 +28,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.47756485767984364 -0.8550282212741263 -0.20213497355488685 5.394974210561848
-  position 23.348368305823016 13.721567723321085 18.167060499988693
+  orientation 0.17471410307304408 -0.9551954741525427 -0.2389070705229983 4.386808524828466
+  position 6.196301079354321 5.321762531323226 -1.1699607957972278
 }
 TexturedBackground {
 }
@@ -202,8 +202,8 @@ DEF Berry2 Solid {
   }
 }
 DEF Berry3 Solid {
-  translation 1.14007 0.0603458 8.0999
-  rotation -0.4472135954998153 2.4166820336214355e-12 -0.8944271909999872 0.0010477170011384145
+  translation -0.98993 0.0585505 0.00990003
+  rotation 0.999999780355065 -0.00046866289706054586 -0.00046866289706054586 1.57033
   children [
     Shape {
       appearance PBRAppearance {
@@ -224,7 +224,7 @@ DEF Berry3 Solid {
   }
 }
 DEF zombie0 Pedestrian {
-  translation -7.707573600054271 1.27 -7.145606399945701
+  translation 4.76207 1.27 -7.45582
   rotation 0 1 0 0.8080057916952204
   name "pedestrian1"
   controller "blue_zombie"
@@ -257,7 +257,7 @@ DEF zombie0 Pedestrian {
   headAngle 0.003272727272726854
 }
 DEF zombie1 Pedestrian {
-  translation -7.62613 1.27 9.10663
+  translation 8.12939 1.27 9.25591
   rotation 0 1 0 2.4944603805566383
   name "pedestrian(1)"
   controller "green_zombie"
@@ -294,8 +294,8 @@ DEF zombie1 Pedestrian {
   headAngle 0.003272727272726854
 }
 DEF zombie4 Pedestrian {
-  translation -0.2575249436194565 1.27 6.951264149888269
-  rotation 0 1 0 -2.4126957399490436
+  translation -9.0777 1.27 7.26672
+  rotation 0 -1 0 2.4127
   name "pedestrian(5)"
   controller "purple_zombie"
   controllerArgs [
@@ -327,7 +327,7 @@ DEF zombie4 Pedestrian {
   headAngle 0.003272727272726854
 }
 DEF zombie5 Pedestrian {
-  translation 0.00222015 1.27 -7.98276
+  translation -12.2984 1.27 -8.0416
   rotation 0 1 0 2.542269011900159
   name "pedestrian(4)"
   controller "acqua_zombie"

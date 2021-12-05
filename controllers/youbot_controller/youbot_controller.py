@@ -4,10 +4,12 @@ from controller import Robot, Motor, Camera, Accelerometer, GPS, Gyro, LightSens
 from controller import Supervisor
 
 from youbot_zombie import *
-import math
    
 #------------------CHANGE CODE BELOW HERE ONLY--------------------------
 #define functions here for making decisions and using sensor inputs
+
+import numpy as np
+import cv2 as cv
 
 class robotPathFinder:
     "pathfinding manager for robot. avoids zombies and seeks berries depending on current robot state. \
@@ -153,7 +155,7 @@ class robotPathFinder:
 
             if not recOut and not lidarOut:
                 self.st = "sentry"
-            elif not recOut and self.range4_10(lidarOut)
+            elif not recOut and self.range4_10(lidarOut):
                self.st = "turn&ID"
             elif not recOut and self.range0_4(lidarOut):
                 self.st = "berryAction"
@@ -283,7 +285,72 @@ def main():
         timer += 1
         
      #------------------CHANGE CODE BELOW HERE ONLY--------------------------   
-         #called every timestep
+        
+        # get image from camera sensor
+        pic = camera8.getImageArray()
+        result = {}
+        if pic:
+            # convert rgb bytes to hsv array
+            pic = np.uint8(pic)
+            hsv = cv.cvtColor(pic, cv.COLOR_BGR2HSV)
+            # define color thresholds
+            ranges =    {
+                            "black" : [np.array([0, 0, 0]), np.array([180, 255, 46])],\
+                            "grey" : [np.array([0, 0, 46]), np.array([180, 43, 220])],\
+                            "white" : [np.array([0, 0, 221]), np.array([180, 30, 225])],\
+                            "red" : [np.array([0, 43, 46]), np.array([10, 255, 225])],\
+                            "red2" : [np.array([156, 43, 46]), np.array([180, 255, 225])],\
+                            "yellow" : [np.array([26, 43, 46]), np.array([34, 255, 225])],\
+                            "green" : [np.array([35, 43, 46]), np.array([77, 255, 225])],\
+                            "aqua" : [np.array([78, 43, 46]), np.array([99, 255, 225])],\
+                            "blue" : [np.array([100, 43, 46]), np.array([124, 255, 255])], \
+                            "orange" : [np.array([11, 43, 46]), np.array([25, 255, 255])],\
+                            "purple" : [np.array([11, 43, 46]), np.array([25, 255, 255])]
+                        }
+            # get the predominant color of the central 3x3 matrix
+            # # print(len(pic), len(pic[0]))
+            # avg = np.array([0, 0, 0])
+            # # color_tally = 0
+            # for row in range((len(pic) // 2 - 1), (len(pic) // 2) + 1):
+            #     for col in range((len(pic[0])//2) - 1, (len(pic[0])//2) + 1):
+            #         avg[0] += pic[row][col][0]
+            #         avg[1] += pic[row][col][1]
+            #         avg[2] += pic[row][col][2]
+            #         # color_tally += 1
+            # # print(color_tally)
+
+            # avg = np.divide(avg, 4)
+            
+            # for color in ranges:
+            #     if all(np.less(ranges[color][0], avg)) and all(np.less(avg, ranges[color][1])):
+            #         print(color)
+
+            for row in range(0, 64):
+                for col in range(63, 65):
+                    pixel = pic[row][col]
+                    for color in ranges:
+                        if all(np.less(ranges[color][0], pixel)) and all(np.less(pixel, ranges[color][1])):
+                            print(color)
+
+
+            # for col_key in ranges:
+            #     pic_copy = hsv
+            #     curr = cv.inRange(pic_copy, ranges[col_key][0], ranges[col_key][1])
+            #     # print(curr)
+            #     if col_key not in result:
+            #         result[col_key] = []
+                
+            #     #TODO: check output format of cv.inRange
+            #         #print("size is ", curr.size)
+                    
+            #         print(curr.size, curr.size)
+            #         for r in range (curr[0].size):
+            #             for c in range (curr[1].size):
+            #                 if curr[r][c] == 255:
+            #                     result[col_key].append((r, c))
+            #     print(result)
+        
+        #called every timestep
         
         
         #possible pseudocode for moving forward, then doing a 90 degree left turn
