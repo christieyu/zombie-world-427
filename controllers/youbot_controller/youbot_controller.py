@@ -10,13 +10,16 @@ import math
 # ------------------CHANGE CODE BELOW HERE ONLY--------------------------
 # define functions here for making decisions and using sensor inputs
 
-class robotPathFinder:
+class robotWeiFinder:
     "pathfinding manager for robot. avoids zombies and seeks berries depending on current robot state. \
     default state is to seek berries"
 
     def __init__(self, robot, state="sentry"):
         self.robot = robot
+        self.health = 100
+        self.energy = 100
         self.st = state
+        self.punch = 0 #only punch one tree. Easiest way to prevent us from getting stuck trying to punch trees forever.
         self.edible = {}  # set of all edible berries
         self.pZ = 0  # boolean representing if we have seen a purple zombie
         self.states = ["sentry", "turn&ID", "berryAction", "survive"]
@@ -34,23 +37,27 @@ class robotPathFinder:
         }
 
     def range4_10(self, lst):
+        "find things within lidar range of 4 to 10 meters"
         for val in lst:
             if 4 <= val <= 10:
                 return True
         return False
 
     def range0_4(self, lst):
+        "find things within lidar range or 0 to 4 meters"
         for val in lst:
             if 0 <= val <= 4:
                 return True
         return False
 
     def move(self, direction):
+        "move robot in direction for .5 meters"
         self.robot.turn(direction)  # turn to correct direction
         self.robot.forward(.5)  # move forward .5 meters
         return
 
     def takeAction(self, lidarOut, recOut, camOut):
+        "take action based on robot state"
         if self.st == "sentry":
             self.sentry(lidarOut, camOut, recOut)
         elif self.st == "turn&ID":
@@ -61,27 +68,25 @@ class robotPathFinder:
             self.survive(lidarOut, camOut, recOut)
         return
 
-    def sentry(self, lidarOut, camOut):
+    def sentry(self, lidarOut, camOut, recOut):
         "do nothing. If low health or low energy, turn&ID"
-        if self.robot.health <= 20 or self.robot.energy <= 20:
-            self.turnID(lidarOut, camOut)
+        if self.health <= 35 or self.energy <= 35:
+            self.st = "turnID"
+            self.takeAction(lidarOut, camOut, recOut)
         return
 
     def turnID(self, lidarOut, camOut, recOut):
+        "turn and identify peaks (technically troughs) in lidar data with camera"
         pass
 
     def survive(self, lidarOut, camOut, recOut):
         "survival mode. determine free space and run away. if abg zombie, go back to start and potentially sentry. \
         if purple, stay in survival"
-        while true:
-            procLidar = self.averageWindow(lidarOut, 5)
-            direction = lidarOut.index(max(procLidar))
-            if 'p' not in recOut:
-                self.move(direction)
-                break
-            else:
-                self.move(direction)
-        return
+
+        procLidar = self.averageWindow(lidarOut, 5)
+        direction = lidarOut.index(max(procLidar))
+        self.move(direction)
+
 
     def identify(self, direction, camOut):
         "determines if item is zombie, tree, or berry. If zombie, or berry, also returns what color. \
@@ -97,7 +102,7 @@ class robotPathFinder:
 
     def berryAction(self, lidarOut, camOut, direction=None):
         "makes choices about whether to eat or not eats berries"
-        # If direction is None, then that means this was directly called by pathfinder
+        # If direction is None, then that means this was directly called by weifinder
         if direction is None:
             direction = lidarOut.index(min(lidarOut))
             self.move(direction)
@@ -108,12 +113,16 @@ class robotPathFinder:
             return
 
         item, color = self.identify(direction, lidarOut)
-        if item == 'tree':  # if item is tree, then do tree action
+        # if item is tree and have not punched tree before, then do tree action.
+        # if already punched a tre before, don't punch
+        if item == 'tree' and self.punch == 0:
             self.treeAction(direction, lidarOut)
+            return
+        elif item == 'tree':
             return
 
         # if berry is edible, eat it by moving towards it
-        if color in self.edible:
+        if item == berry and color in self.edible:
             self.move(direction)
         return
 
@@ -134,11 +143,12 @@ class robotPathFinder:
         return
 
     def treeAction(self, direction, lidarOut):
-        "make choice about whether to approach or avoid tree"
+        "make choice about whether to approach or punch tree. If punch, log punch"
         armReach = 0.1
         if lidarOut[direction] > armReach:
             self.move(direction)
         else:
+            self.punch = 1
             self.robot.arm.move()
         return
 
@@ -174,7 +184,6 @@ class robotPathFinder:
         ret = [0] * 360
         for i in range(len(lst) - 1):
             ni = int(i / (512 / 360.0))
-            print(i, ni)
             if ret[ni] == 0:
                 ret[ni] = lst[i]
             else:
@@ -182,31 +191,36 @@ class robotPathFinder:
         ret[-1] = (ret[0] + ret[-2]) / 0.2
         return ret
 
-    def pathfinder(self, lidar_output, reciver_output, camera_output):
+
+    def weifinder(self, robot_info, lidar_output, receiver_output, camera_output= lambda : []):
         "top level controller for pathfinding. functions for output from sensors are passed as paramaters\
         each cycle of loop determines what state to be in. Actions are taken by takeAction function"
-        while True:
-            # go through each point in lidar output, determine appropriate action if item is within action threshold
-            lidarOut = lidar_output()
-            lidarOut = self.compressLidar(lidarOut)  # compress lidarOut into len 360 array
-            recOut = reciver_output()
-            camOut = camera_output()
+        #update robot information
+        self.health = robot_info[0]
+        self.energy = robot_info[1]
+        print(self.health, self.energy)
 
-            procLidar = self.averageWindow(lidarOut)
-            procLidar = list(map(lambda x: x * -1, procLidar))  # turn peaks into troughs
-            procLidar = self.peaks(procLidar)
+        # go through each point in lidar output, determine appropriate action if item is within action threshold
+        lidarOut = lidar_output()
+        lidarOut = self.compressLidar(lidarOut)  # compress lidarOut into len 360 array
+        recOut = receiver_output()
+        camOut = camera_output()
 
-            if not recOut and not any(procLidar):
-                self.st = "sentry"
-            elif not recOut and self.range4_10(lidarOut):
-                self.st = "turn&ID"
-            elif not recOut and self.range0_4(lidarOut):
-                self.st = "berryAction"
-            elif rec:
-                self.st = "survive"
-            else:
-                self.st = "sentry"
-            self.takeAction(lidarOut, recOut, camOut)
+        procLidar = self.averageWindow(lidarOut)
+        procLidar = list(map(lambda x: x * -1, procLidar))  # turn peaks into troughs
+        procLidar = self.peaks(procLidar)
+
+        if not recOut and not any(procLidar):
+            self.st = "sentry"
+        elif not recOut and self.range4_10(lidarOut):
+            self.st = "turn&ID"
+        elif not recOut and self.range0_4(lidarOut):
+            self.st = "berryAction"
+        elif recOut:
+            self.st = "survive"
+        else:
+            self.st = "sentry"
+        self.takeAction(lidarOut, recOut, camOut)
 
 
 # ------------------CHANGE CODE ABOVE HERE ONLY--------------------------
@@ -218,7 +232,7 @@ def main():
     timestep = int(robot.getBasicTimeStep())
 
     # health, energy, armour in that order
-    robot_info = [100, 100, 0]
+    robot_info = [100, 21, 0]
     passive_wait(0.1, robot, timestep)
     pc = 0
     timer = 0
@@ -294,6 +308,9 @@ def main():
 
     i = 0
 
+    # create a robotWeiFinder object to manage the robot and name it andrew due to him being a dank boi
+    Andrew = robotWeiFinder(robot)
+
     # ------------------CHANGE CODE ABOVE HERE ONLY--------------------------
 
     while (robot_not_dead == 1):
@@ -325,22 +342,24 @@ def main():
         # ------------------CHANGE CODE BELOW HERE ONLY--------------------------
         # the following is called every timestep
 
-        # lidar output ---> array of distances of length 512 (our horizontal resolution)
-        lid_out = lidar.getRangeImage()
-        print(lid_out)
+        def recFxn():
+            "function to get reciever output"
+            # receiver output ---> ['a', 'p', 'g', 'b']
+            import struct
+            rec_out = []
+            while (receiver.getQueueLength() > 0):
+                message = receiver.getData()
+                dataList = struct.unpack("chd", message)
+                # dir = receiver.getEmitterDirection()
+                # signal = receiver.getSignalStrength()
+                # print(f"message is {message} and {dataList}, dir is {dir}, signal is {signal}")
+                receiver.nextPacket()
+                rec_out.append(dataList[0].decode('utf-8'))
+            return rec_out
 
-        # receiver output ---> ['a', 'p', 'g', 'b']
-        import struct
-        rec_out = []
-        while (receiver.getQueueLength() > 0):
-            message = receiver.getData()
-            dataList = struct.unpack("chd", message)
-            dir = receiver.getEmitterDirection()
-            signal = receiver.getSignalStrength()
-            # print(f"message is {message} and {dataList}, dir is {dir}, signal is {signal}")
-            receiver.nextPacket()
-            rec_out.append(dataList[0].decode('utf-8'))
-        print(rec_out)
+        # lidar output ---> array of distances of length 512 (our horizontal resolution)
+        Andrew.weifinder(robot_info, lidar.getRangeImage, recFxn)
+
 
         # possible pseudocode for moving forward, then doing a 90 degree left turn
         # if i <100
