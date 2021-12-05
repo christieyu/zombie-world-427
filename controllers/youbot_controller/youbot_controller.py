@@ -19,10 +19,10 @@ class robotWeiFinder:
         self.health = 100
         self.energy = 100
         self.st = state
-        self.punch = 0 #only punch one tree. Easiest way to prevent us from getting stuck trying to punch trees forever.
+        self.punch = 0  # only punch one tree: prevent us from getting stuck trying to punch trees forever.
         self.edible = {}  # set of all edible berries
         self.pZ = 0  # boolean representing if we have seen a purple zombie
-        self.states = ["sentry", "turn&ID", "berryAction", "survive"]
+        self.states = ["sentry", "turn&ID", "berryAction", "treeAction", "survive"]
         self.berries = {
             # Set "points" for berries:
             # negative pts = bad result — do not try again
@@ -56,16 +56,18 @@ class robotWeiFinder:
         self.robot.forward(.5)  # move forward .5 meters
         return
 
-    def takeAction(self, lidarOut, recOut, camOut):
+    def takeAction(self, lidarOut, camOut, recOut, direction=None):
         "take action based on robot state"
         if self.st == "sentry":
             self.sentry(lidarOut, camOut, recOut)
         elif self.st == "turn&ID":
             self.turnID(lidarOut, camOut, recOut)
         elif self.st == "berryAction":
-            self.berryAction(lidarOut, camOut)
+            self.berryAction(lidarOut, camOut, recOut, direction)
         elif self.st == "survive":
             self.survive(lidarOut, camOut, recOut)
+        elif self.st == "treeAction":
+            self.treeAction(lidarOut, camOut, recOut, direction)
         return
 
     def sentry(self, lidarOut, camOut, recOut):
@@ -82,9 +84,7 @@ class robotWeiFinder:
     def survive(self, lidarOut, camOut, recOut):
         "survival mode. determine free space and run away. if abg zombie, go back to start and potentially sentry. \
         if purple, stay in survival"
-
-        procLidar = self.averageWindow(lidarOut, 5)
-        direction = lidarOut.index(max(procLidar))
+        direction = lidarOut.index(max(lidarOut))
         self.move(direction)
 
 
@@ -100,7 +100,7 @@ class robotWeiFinder:
         else:
             return 'berry', color
 
-    def berryAction(self, lidarOut, camOut, direction=None):
+    def berryAction(self, lidarOut, camOut, recOut, direction=None):
         "makes choices about whether to eat or not eats berries"
         # If direction is None, then that means this was directly called by weifinder
         if direction is None:
@@ -116,7 +116,8 @@ class robotWeiFinder:
         # if item is tree and have not punched tree before, then do tree action.
         # if already punched a tre before, don't punch
         if item == 'tree' and self.punch == 0:
-            self.treeAction(direction, lidarOut)
+            self.st = "treeAction"
+            self.takeAction(lidarOut, camOut, recOut, direction)
             return
         elif item == 'tree':
             return
@@ -142,8 +143,13 @@ class robotWeiFinder:
                 self.berries[berrycolor].add(3)
         return
 
-    def treeAction(self, direction, lidarOut):
+    def treeAction(self, lidarOut, camOut, recOut, direction = None):
         "make choice about whether to approach or punch tree. If punch, log punch"
+        if direction is None:
+            direction = lidarOut.index(min(lidarOut))
+            self.move(direction)
+            return
+
         armReach = 0.1
         if lidarOut[direction] > armReach:
             self.move(direction)
@@ -198,7 +204,6 @@ class robotWeiFinder:
         #update robot information
         self.health = robot_info[0]
         self.energy = robot_info[1]
-        print(self.health, self.energy)
 
         # go through each point in lidar output, determine appropriate action if item is within action threshold
         lidarOut = lidar_output()
@@ -206,11 +211,10 @@ class robotWeiFinder:
         recOut = receiver_output()
         camOut = camera_output()
 
-        procLidar = self.averageWindow(lidarOut)
-        procLidar = list(map(lambda x: x * -1, procLidar))  # turn peaks into troughs
-        procLidar = self.peaks(procLidar)
+        lidarOut = self.averageWindow(lidarOut) # convert lidar out to windowed lidar
+        procLidar = list(map(lambda x: x * -1, lidarOut))  # turn peaks into troughs for detect transitions between vals in peak
 
-        if not recOut and not any(procLidar):
+        if not recOut and not any(self.peaks(procLidar)):
             self.st = "sentry"
         elif not recOut and self.range4_10(lidarOut):
             self.st = "turn&ID"
@@ -220,7 +224,7 @@ class robotWeiFinder:
             self.st = "survive"
         else:
             self.st = "sentry"
-        self.takeAction(lidarOut, recOut, camOut)
+        self.takeAction(lidarOut, camOut, recOut)
 
 
 # ------------------CHANGE CODE ABOVE HERE ONLY--------------------------
