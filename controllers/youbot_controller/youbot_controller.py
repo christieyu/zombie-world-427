@@ -4,12 +4,11 @@ from controller import Robot, Motor, Camera, Accelerometer, GPS, Gyro, LightSens
 from controller import Supervisor
 
 from youbot_zombie import *
-import math
-import numpy
-import cv2
 
 # ------------------CHANGE CODE BELOW HERE ONLY--------------------------
 # define functions here for making decisions and using sensor inputs
+import numpy as np
+import cv2 as cv
 
 class robotWeiFinder:
     "pathfinding manager for robot. avoids zombies and seeks berries depending on current robot state. \
@@ -24,7 +23,7 @@ class robotWeiFinder:
         self.turnState = None
         self.maxspeed = 14.81
         self.punch = 0  # only punch one tree: prevent us from getting stuck trying to punch trees forever.
-        self.edible = {}  # set of all edible berries
+        self.edible = set(['red', 'yellow', 'orange', 'pink'])  # set of all edible berries
         self.pZ = 0  # boolean representing if we have seen a purple zombie
         self.states = ["sentry", "turn&ID", "berryAction", "treeAction", "survive"]
         self.berries = {
@@ -135,20 +134,22 @@ class robotWeiFinder:
         "survival mode. determine free space and run away. if abg zombie, go back to start and potentially sentry. \
         if purple, stay in survival"
         direction = lidarOut.index(max(lidarOut))
-        print(lidarOut[direction])
+        # print(lidarOut[direction])
         self.move(direction)
 
 
     def identify(self, direction, camOut):
         "determines if item is zombie, tree, or berry. If zombie, or berry, also returns what color. \
         second term if empty string if is tree"
-        self.turn((180 + direction) % 360)  # turn so back of robot faces the direction
+        # self.turn((180 + direction) % 360)  # turn so back of robot faces the direction
 
         maxv=-float('inf')
         mkey = None
+        
+        # print (camOut)
 
-        for key, val in camOut:
-            if val > maxv:
+        for key, val in camOut.items():
+            if len(val) > maxv:
                 val = maxv
                 mkey = key
 
@@ -172,7 +173,7 @@ class robotWeiFinder:
         if self.pZ:
             return
 
-        item, color = self.identify(direction, lidarOut)
+        item, color = self.identify(direction, camOut)
         # if item is tree and have not punched tree before, then do tree action.
         # if already punched a tre before, don't punch
         if item == 'tree' and self.punch == 0:
@@ -183,7 +184,7 @@ class robotWeiFinder:
             return
 
         # if berry is edible, eat it by moving towards it
-        if item == berry and color in self.edible:
+        if item == 'berry' and color in self.edible:
             self.move(direction)
         return
 
@@ -224,7 +225,7 @@ class robotWeiFinder:
     def wallAction(self, lidarOut, camOut, recOut):
         "near a wall. Turn and move in free direction"
         direction = lidarOut.index(max(lidarOut))
-        print(direction, max(lidarOut))
+        # print(direction, max(lidarOut))
         self.move(direction)
 
     def averageWindow(self, array, window=5):
@@ -475,7 +476,6 @@ def main():
                     curr = cv.inRange(pic_copy, ranges[col_key][0], ranges[col_key][1])
                     # print(curr)
                     # print(hsv[(hsv[0].size)//2][hsv[0][0].size//2])
-                    print(hsv[len(hsv) // 2][len(hsv[0]) // 2])
                     if col_key not in result:
                         result[col_key] = []
                         # print(curr.size, curr.size)
@@ -502,13 +502,13 @@ def main():
             # print(timestep * i + timer, start + turntime * 50000)
             if timestep * i + timer < start + turntime * 50000:
                 if turndir == 'left':
-                    print("left")
+                    # print("left")
                     fl.setVelocity(-Andrew.maxspeed*ratio)
                     bl.setVelocity(-Andrew.maxspeed*ratio)
                     fr.setVelocity(Andrew.maxspeed*ratio)
                     br.setVelocity(Andrew.maxspeed*ratio)
                 else:
-                    print("right")
+                    # print("right")
                     fl.setVelocity(Andrew.maxspeed*ratio)
                     bl.setVelocity(Andrew.maxspeed*ratio)
                     fr.setVelocity(-Andrew.maxspeed*ratio)
@@ -520,7 +520,7 @@ def main():
         if Andrew.moveState:
             movedir, movetime = Andrew.moveState
             if timestep * i + timer < start + movetime * 100000:
-                print("forward")
+                # print("forward")
                 fl.setVelocity(Andrew.maxspeed)
                 bl.setVelocity(Andrew.maxspeed)
                 fr.setVelocity(Andrew.maxspeed)
