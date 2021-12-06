@@ -6,6 +6,7 @@ from controller import Supervisor
 from youbot_zombie import *
 import math
 import numpy
+import cv2
 
 # ------------------CHANGE CODE BELOW HERE ONLY--------------------------
 # define functions here for making decisions and using sensor inputs
@@ -106,28 +107,27 @@ class robotWeiFinder:
         return
 
     def turnID(self, lidarOut, camOut, recOut):
-        # "turn and identify peaks (technically troughs) in lidar data with camera"
-        # procLidar = list(map(lambda x: x * -1, lidarOut))
-        # peakList = self.peaks(procLidar)
-        #
-        # for i in range(len(procLidar)):
-        #     if peakList[i]:
-        #         obj, color = self.identify(i, camOut)
-        #         direction = i
-        #         break
-        #
-        # if obj == "tree":
-        #     self.st = "treeAction"
-        #     self.takeAction(lidarOut, camOut, recOut, direction)
-        #
-        # elif obj == "berry":
-        #     self.st = "berryAction"
-        #     self.takeAction(lidarOut, camOut, recOut, direction)
-        #
-        # elif obj == "zomb":
-        #     self.st = "sentry"
-        #     self.takeAction(lidarOut, camOut, recOut, direction)
-        pass
+        "turn and identify peaks (technically troughs) in lidar data with camera"
+        procLidar = list(map(lambda x: x * -1, lidarOut))
+        peakList = self.peaks(procLidar)
+
+        for i in range(len(procLidar)):
+            if peakList[i]:
+                obj, color = self.identify(i, camOut)
+                direction = i
+                break
+
+        if obj == "tree":
+            self.st = "treeAction"
+            self.takeAction(lidarOut, camOut, recOut, direction)
+
+        elif obj == "berry":
+            self.st = "berryAction"
+            self.takeAction(lidarOut, camOut, recOut, direction)
+
+        elif obj == "zomb":
+            self.st = "sentry"
+            self.takeAction(lidarOut, camOut, recOut, direction)
 
 
 
@@ -155,7 +155,7 @@ class robotWeiFinder:
         color = mkey
         if color == 'black':
             return 'tree', ""
-        elif color in list("aqua", "purple", "blue", "green"):
+        elif color in ["aqua", "purple", "blue", "green"]:
             return 'zomb', color
         else:
             return 'berry', color
@@ -268,7 +268,7 @@ class robotWeiFinder:
         return ret
 
 
-    def weifinder(self, robot_info, lidar_output, receiver_output, camera_output=lambda:[]):
+    def weifinder(self, robot_info, lidar_output, receiver_output, camera_output):
         "top level controller for pathfinding. functions for output from sensors are passed as paramaters\
         each cycle of loop determines what state to be in. Actions are taken by takeAction function"
 
@@ -492,7 +492,7 @@ def main():
         # lidar output ---> array of distances of length 512 (our horizontal resolution)
         if not moving:
             if i % 10 ==0:
-                Andrew.weifinder(robot_info, lidar.getRangeImage, recFxn)
+                Andrew.weifinder(robot_info, lidar.getRangeImage, recFxn, camFxn)
                 if Andrew.turnState or Andrew.moveState:
                     start = timer + i * timestep
 
