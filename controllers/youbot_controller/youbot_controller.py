@@ -52,12 +52,15 @@ class robotWeiFinder:
 
     def move(self, direction):
         "move robot in direction for .5 meters"
-        self.robot.turn(direction)  # turn to correct direction
-        self.robot.forward(.5)  # move forward .5 meters
+        print("turn", direction)
+        print("move", 0.5)
+        # self.turn(direction)  # turn to correct direction
+        # self.forward(0.5)  # move forward .5 meters
         return
 
     def takeAction(self, lidarOut, camOut, recOut, direction=None):
         "take action based on robot state"
+        print("takeAction", self.st)
         if self.st == "sentry":
             self.sentry(lidarOut, camOut, recOut)
         elif self.st == "turn&ID":
@@ -68,6 +71,8 @@ class robotWeiFinder:
             self.survive(lidarOut, camOut, recOut)
         elif self.st == "treeAction":
             self.treeAction(lidarOut, camOut, recOut, direction)
+        elif self.st == "wallAction":
+            self.wallAction(lidarOut, camOut, recOut)
         return
 
     def sentry(self, lidarOut, camOut, recOut):
@@ -158,6 +163,11 @@ class robotWeiFinder:
             self.robot.arm.move()
         return
 
+    def wallAction(self, lidarOut, camOut, recOut):
+        "near a wall. Turn and move in free direction"
+        direction = lidarOut.index(max(lidarOut))
+        self.move(direction)
+
     def averageWindow(self, array, window=5):
         "returns list of average values of lst for windows of size"
 
@@ -216,10 +226,12 @@ class robotWeiFinder:
 
         if not recOut and not any(self.peaks(procLidar)):
             self.st = "sentry"
+        elif not recOut and self.range0_4(lidarOut) and sum(self.peaks(procLidar)) == 1: # only one nearby thing
+            self.st = "berryAction"
+        elif not recOut and self.range0_4(lidarOut):
+            self.st = "wallAction"
         elif not recOut and self.range4_10(lidarOut):
             self.st = "turn&ID"
-        elif not recOut and self.range0_4(lidarOut):
-            self.st = "berryAction"
         elif recOut:
             self.st = "survive"
         else:
